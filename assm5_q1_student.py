@@ -24,8 +24,8 @@ def single_trial(rng, verbose=True):
     Returns tuple (car_pos, initial_pick, host_open, final_choice_if_switch, win_if_switch)
     Doors coded 0,1,2.
     """
-    car = #YOUR_CODE_HERE_TO_GENERATE_DOOR_WITH_CAR         # car position {0,1,2}
-    pick = #YOUR_CODE_HERE_TO_GENERATE_PICKED_DOOR_        # player's initial pick
+    car = st.randint.rvs(0, 3)       # car position {0,1,2}
+    pick = st.randint.rvs(0, 3)      # player's initial pick
     
     # host choice:
     if pick != car:
@@ -37,7 +37,7 @@ def single_trial(rng, verbose=True):
         choice_idx = st.randint(0, 2).rvs(random_state=rng)
         host_open = other_doors[int(choice_idx)]
     remaining = ({0, 1, 2} - {pick, host_open}).pop()
-    final_choice_if_switch = #YOUR_CODE_HERE
+    final_choice_if_switch = remaining #YOUR_CODE_HERE
     win_if_switch = int(final_choice_if_switch == car)
     win_if_not_switch = int(pick == car)
 
@@ -88,7 +88,7 @@ def simulate_monty(N=200, switch=True, seed=None, createPlot=True):
     cum_wins = np.cumsum(wins)
 
     # Compute running probability of winning after each trial
-    p_k = #YOUR_CODE_HERE 
+    p_k = cum_wins / (np.arange(1, N + 1))*100
 
     # Add point to the plot
     if createPlot:
@@ -107,10 +107,10 @@ def simulate_monty(N=200, switch=True, seed=None, createPlot=True):
     # Return both the running probabilities and the raw win/loss record
     return p_k, wins
 
-# --------------------------
+#--------------------------
 # TASK 4: Confidence interval plot
 # --------------------------
-def plot_monty_CI(N=500, switch=True, seed=None, alpha=0.05):
+def plot_monty_CI(N=200, switch=True, seed=None, alpha=0.05):
     """
     Simulate N trials, compute cumulative probability, and plot CI.
     CI is computed as normal approx: p_k ± z*sqrt(p*(1-p)/n)
@@ -123,7 +123,7 @@ def plot_monty_CI(N=500, switch=True, seed=None, alpha=0.05):
     p_frac = p_k / 100
     
     # Compute standard error and CI
-    z = #YOUR_CODE_HERE
+    z = st.norm.ppf(1-alpha/2)
     se = np.sqrt(p_frac * (1 - p_frac) / (np.arange(1, N+1)))
     lower = p_frac - z * se
     upper = p_frac + z * se
@@ -168,32 +168,32 @@ def compare_strategies_plot(N=500, seed=None):
     plt.show(block=False)
 
 
-# --------------------------
-# Main function
-# --------------------------
+# # --------------------------
+# # Main function
+# # --------------------------
 if __name__ == "__main__":
     # Example parameters
     N = 200
     seed = 20250917
     rng = np.random.default_rng(seed)
     
-    # Task 1: single trial
-    # for i in range(5):
-    #     print(f"Trial {i+1}:")
-    #     single_trial(rng)
+# Task 1: single trial
+for i in range(5):
+    print(f"Trial {i+1}:")
+    single_trial(rng)
 
-    # Task 2 & 3: simulate and get cumulative p_k
-    p_switch, wins_switch = simulate_monty(N, switch=True, seed=seed, createPlot=True)
+# Task 2 & 3: simulate and get cumulative p_k
+p_switch, wins_switch = simulate_monty(N, switch=True, seed=seed, createPlot=True)
 
-    # Task 4: plot CI
-    # plot_monty_CI(N=200, switch=True, seed=None, alpha=0.05)
-    # plot_monty_CI(N=200, switch=False, seed=None, alpha=0.05)
+# Task 4: plot CI
+plot_monty_CI(N=200, switch=True, seed=None, alpha=0.05)
+plot_monty_CI(N=200, switch=False, seed=None, alpha=0.05)
 
-    # Task 5: side-by-side comparison of switch-or-not
-    # compare_strategies_plot()
+## Task 5: side-by-side comparison of switch-or-not
+compare_strategies_plot()
 
-    # display any open matplotlib figures
-    import matplotlib.pyplot as plt
-    plt.show()
+# display any open matplotlib figures
+import matplotlib.pyplot as plt
+plt.show()
 
-    pass
+pass
